@@ -3,30 +3,33 @@
 // REACT
 import { FormEvent, useState } from "react";
 
-// LIBRARIES
-import { useMutation } from "@tanstack/react-query";
-
-// SERVER
-import { generateChatResponse } from "@/server/action";
+// HOOKS
+import { useCreateMessage } from "@/app/hooks/useCreateMessage";
 
 export default function Chat() {
   const [text, setText] = useState("");
-  const [messages, setMessages] = useState([]);
-
-  const { mutate: createMessage } = useMutation({
-    mutationFn: (message: string) => generateChatResponse(message),
-  });
+  const [messages, setMessages] = useState<string[]>([]);
+  const { createMessage, isPending } = useCreateMessage();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     createMessage(text);
+    setMessages(prevMessages => [...prevMessages, text]);
+    setText("");
   };
 
   return (
     <div className="min-h-[calc(100vh-6rem)] grid grid-rows-[1fr, auto]">
       <div>
-        <h2 className="text-5xl">Messages</h2>
+        {messages.map((message, i) => (
+          <div
+            key={i}
+            className="bg-base-200 flex p-6 mx-8 px-8 text-xl leading-loose border-b border-base-300"
+          >
+            <p className="max-w-3xl">{message}</p>
+          </div>
+        ))}
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-4xl pt-[42rem]">
@@ -40,7 +43,7 @@ export default function Chat() {
             onChange={e => setText(e.target.value)}
           />
           <button className="btn btn-primary join-item" type="submit">
-            Ask Question
+            {isPending ? "Please wait..." : "Ask Question"}
           </button>
         </div>
       </form>
