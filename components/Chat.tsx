@@ -4,7 +4,7 @@
 import { FormEvent, useState } from "react";
 
 // HOOKS
-import { useCreateMessage } from "@/app/hooks/useCreateMessage";
+import { useCreateMessage } from "@/app/hooks/useMessage";
 
 export default function Chat() {
   const [text, setText] = useState("");

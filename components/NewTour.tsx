@@ -6,14 +6,20 @@ import { FieldValues, useForm } from "react-hook-form";
 // COMPONENTS
 import { TourInfo } from "./index";
 
+// HOOKS
+import { useGenerateTourResponse } from "@/app/hooks/useTour";
+
 export default function NewTour() {
   const { register, handleSubmit, reset } = useForm();
+  const { generateTourResponse, isPending, tour } = useGenerateTourResponse();
 
   const handleTour = (data: FieldValues) => {
-    console.log(data);
+    generateTourResponse({ city: data.city, country: data.country });
 
     reset();
   };
+
+  if (isPending) return <span className="loading loading-lg" />;
 
   return (
     <>
@@ -45,9 +51,7 @@ export default function NewTour() {
         </div>
       </form>
 
-      <div className="mt-16">
-        <TourInfo />
-      </div>
+      <div className="mt-16">{tour && <TourInfo tour={tour} />}</div>
     </>
   );
 }
