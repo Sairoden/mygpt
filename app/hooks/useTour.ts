@@ -6,8 +6,8 @@ import toast from "react-hot-toast";
 
 // SERVICES
 import {
-  createNewTour,
-  getExistingTour,
+  createNewTour as createNewTourApi,
+  getExistingTour as getExistingTourApi,
   generateTourResponse as generateTourResponseApi,
   type TourProps,
 } from "@/services/apiTours";
@@ -15,13 +15,26 @@ import {
 // const queryClient = useQueryClient();
 
 export const useGetExistingTour = () => {
-  useMutation({
+  const { mutate: getExistingTour, isPending } = useMutation({
     mutationFn: ({ city, country }: TourProps) =>
-      getExistingTour({ city, country }),
+      getExistingTourApi({ city, country }),
   });
+
+  return { getExistingTour, isPending };
 };
 
-export const useCreateNewTour = () => {};
+export const useCreateNewTour = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate: createNewTour, isPending } = useMutation({
+    mutationFn: ({ city, country }: TourProps) =>
+      createNewTourApi({ city, country }),
+  });
+
+  queryClient.invalidateQueries({ queryKey: ["tours"] });
+
+  return { createNewTour, isPending };
+};
 
 export const useGenerateTourResponse = () => {
   const {

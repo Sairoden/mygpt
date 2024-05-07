@@ -7,19 +7,38 @@ import { FieldValues, useForm } from "react-hook-form";
 import { TourInfo } from "./index";
 
 // HOOKS
-import { useGenerateTourResponse } from "@/app/hooks/useTour";
+import {
+  useGenerateTourResponse,
+  useGetExistingTour,
+  useCreateNewTour,
+} from "@/app/hooks/useTour";
 
 export default function NewTour() {
   const { register, handleSubmit, reset } = useForm();
   const { generateTourResponse, isPending, tour } = useGenerateTourResponse();
+  const { getExistingTour, isPending: isPending2 } = useGetExistingTour();
+  const { createNewTour, isPending: isPending3 } = useCreateNewTour();
 
   const handleTour = (data: FieldValues) => {
-    generateTourResponse({ city: data.city, country: data.country });
+    const existingTour = getExistingTour({
+      city: data.city,
+      country: data.country,
+    });
+
+    if (existingTour !== undefined) return existingTour;
+
+    const newTour = generateTourResponse({
+      city: data.city,
+      country: data.country,
+    });
+
+    if (newTour !== undefined) createNewTour(newTour);
 
     reset();
   };
 
-  if (isPending) return <span className="loading loading-lg" />;
+  if (isPending || isPending2 || isPending3)
+    return <span className="loading loading-lg" />;
 
   return (
     <>

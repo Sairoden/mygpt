@@ -2,6 +2,7 @@
 
 // LIBRARIES
 import OpenAI from "openai";
+import prisma from "@/utils/db";
 
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_KEY,
@@ -13,7 +14,14 @@ export type TourProps = {
 };
 
 export const getExistingTour = async ({ city, country }: TourProps) => {
-  return null;
+  return await prisma.tour.findUnique({
+    where: {
+      city_country: {
+        city,
+        country,
+      },
+    },
+  });
 };
 
 export const generateTourResponse = async ({ city, country }: TourProps) => {
@@ -51,6 +59,13 @@ export const generateTourResponse = async ({ city, country }: TourProps) => {
   }
 };
 
-export const createNewTour = async (tour: string) => {
-  return null;
+export const createNewTour = async (tour: TourProps) => {
+  return prisma.tour.create({
+    data: {
+      ...tour,
+      title: "",
+      description: "",
+      stops: [],
+    },
+  });
 };
