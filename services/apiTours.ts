@@ -13,7 +13,7 @@ export type TourProps = {
   country: string;
 };
 
-export const getAllTour = async (searchTerm: string) => {
+export const getAllTour = async (searchTerm: string = "") => {
   if (!searchTerm) {
     const tours = await prisma.tour.findMany({
       orderBy: {
